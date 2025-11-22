@@ -1,0 +1,25 @@
+# Global config
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+# Alertmanager config
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+# Load rules (if any)
+rule_files: []
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus itself
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # Flask app metrics
+  - job_name: "flask_app"
+    static_configs:
+      - targets: ["localhost:5000"]  # your Flask app runs on port 5000

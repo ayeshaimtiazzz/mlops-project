@@ -22,4 +22,4 @@ scrape_configs:
   # Flask app metrics
   - job_name: "flask_app"
     static_configs:
-      - targets: ["localhost:5000"]  # your Flask app runs on port 5000
+      - targets: ["flask_app:5000"]  # use the service name of the Flask container

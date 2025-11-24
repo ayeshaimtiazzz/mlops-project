@@ -1,0 +1,60 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-push:
+    name: Build & Push Docker Images
+    runs-on: self-hosted
+
+    steps:
+      # Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Log in to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Build Flask app image
+      - name: Build Flask App Image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/mlops_project:emnist_app -f dockerfiles/Dockerfile.app .
+
+      # Build Model Training image
+      - name: Build Model Training Image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/mlops_project:emnist_training -f dockerfiles/Dockerfile.train .
+
+      # Push Flask app image
+      - name: Push Flask App Image
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/mlops_project:emnist_app
+
+      # Push Model Training image
+      - name: Push Model Training Image
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/mlops_project:emnist_training
+
+  deploy:
+    name: Redeploy Docker Compose Stack
+    runs-on: self-hosted
+    needs: build-and-push
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Pull latest Docker images
+        run: |
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/mlops_project:emnist_app
+          docker pull ${{ secrets.DOCKERHUB_USERNAME }}/mlops_project:emnist_training
+
+      - name: Stop existing containers (if any)
+        run: |
+          docker-compose -f docker-compose.yml down || true
+
+      - name: Deploy updated stack
+        run: |
+          docker-compose -f docker-compose.yml up -d --build

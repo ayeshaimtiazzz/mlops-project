@@ -22,8 +22,10 @@ import time
 app = Flask(__name__)
 
 # Load trained EMNIST model
-model_path = "//mnt//c//Users//aimte//OneDrive//Desktop//uni work//mlops//project_mlops//notebooks//models//emnist_federated_model.h5"
-model = load_model(model_path)
+# model_path = "//mnt//c//Users//aimte//OneDrive//Desktop//uni work//mlops//project_mlops//notebooks//models//emnist_federated_model.h5"
+model_path = "models/emnist_federated_model.h5"
+
+model = load_model(model_path,compile=False)
 print(f"Loaded model from {model_path}")
 
 # EMNIST stats for drift detection

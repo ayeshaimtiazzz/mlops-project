@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  # =========================
+  # Flask App Service
+  # =========================
+  flask-app:
+    build: .
+    container_name: flask-app
+    ports:
+      - "5000:5000"  # Flask app
+    restart: unless-stopped
+    networks:
+      - mlops-net
+
+  # =========================
+  # Prometheus Service
+  # =========================
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus-2.50.0.linux-amd64/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"  # Prometheus UI
+    restart: unless-stopped
+    networks:
+      - mlops-net
+
+  # =========================
+  # Grafana Service
+  # =========================
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"  # Grafana UI
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    networks:
+      - mlops-net
+
+# =========================
+# Custom network
+# =========================
+networks:
+  mlops-net:
+    driver: bridge

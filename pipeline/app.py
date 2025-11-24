@@ -22,6 +22,7 @@ import time
 app = Flask(__name__)
 
 # Load trained EMNIST model
+# changed the path for docker 
 # model_path = "//mnt//c//Users//aimte//OneDrive//Desktop//uni work//mlops//project_mlops//notebooks//models//emnist_federated_model.h5"
 model_path = "models/emnist_federated_model.h5"
 

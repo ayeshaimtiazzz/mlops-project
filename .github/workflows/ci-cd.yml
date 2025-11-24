@@ -13,7 +13,8 @@ jobs:
       # Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v3
-
+        with:
+            token: ${{ secrets.GITHUB_TOKEN }}
       # Log in to Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v2

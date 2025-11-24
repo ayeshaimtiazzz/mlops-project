@@ -1,4 +1,4 @@
-tff_env
+tff_env (virtual env)
 __pycache__
 *.pyc
 *.pyo
